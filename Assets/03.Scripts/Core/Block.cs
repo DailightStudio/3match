@@ -74,21 +74,12 @@ public class Block : MonoBehaviour
         while (IsMoving) yield return null;
     }
 
-    /// <summary>TMT(폭탄) 외형 적용/해제</summary>
+    /// <summary>Bomb(폭탄) 외형 적용</summary>
     public void ApplyBombSprite(bool on, Sprite bombSprite)
     {
         isBomb = on;
-        if (!sr) return;
 
-        if (on)
-        {
-            sr.sprite = bombSprite;
-            sr.color = Color.white;
-        }
-        else
-        {
-            sr.sprite = originalSprite;
-        }
+        if (on) sr.sprite = bombSprite;
         transform.localScale = Vector3.one;
     }
 }
