@@ -1,8 +1,5 @@
 using UnityEngine;
 using UnityEngine.UI;
-#if TMP_PRESENT || UNITY_TEXTMESHPRO
-using TMPro;
-#endif
 
 public class UIController : MonoBehaviour
 {

@@ -1,5 +1,6 @@
 using UnityEngine;
 
+
 public class InputHandler : MonoBehaviour
 {
     public BoardManager board;
