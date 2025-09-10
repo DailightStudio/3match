@@ -75,8 +75,7 @@ public class ResolveService
         foreach (var bb in toClear)
         {
             if (!bb) continue;
-            grid.Set(bb.X, bb.Y, null);
-            Object.Destroy(bb.gameObject);
+            grid.Remove(bb.X, bb.Y);
         }
 
         // 승격(폭탄)
