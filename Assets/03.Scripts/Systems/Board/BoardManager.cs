@@ -80,29 +80,7 @@ public class BoardManager : MonoBehaviour
         {
             if (simulateContinuously && grid != null && grid.IsReady)
                 gravity.ContinuousTick(fallSpeed);
-        }
-        else
-        {
-            AutoCenterPreviewInEditor();
-        }
-    }
-
-    void AutoCenterPreviewInEditor()
-    {
-        if (grid == null || !grid.IsReady) return;
-        var before = boardOrigin;
-        grid.CenterByCurrentBounds();
-        boardOrigin = grid.Origin;
-        if (before != boardOrigin) grid.RefreshAllWorldPositions();
-    }
-
-    [ContextMenu("Center Now")]
-    public void CenterNow()
-    {
-        if (grid == null || !grid.IsReady) return;
-        grid.CenterByCurrentBounds();
-        boardOrigin = grid.Origin;
-        grid.RefreshAllWorldPositions();
+        }   
     }
 
     // ===== coords / build =====
