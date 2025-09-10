@@ -30,7 +30,7 @@ public class BoardManager : MonoBehaviour
     public float settleTick = 0.02f;
 
     [Header("Special (Bomb/TMT)")]
-    public int defaultBombRadius = 1;      // 1 = 인접 1칸씩 총 6칸
+    public int defaultBombRadius = 1;      // 인접 1칸씩 총 6칸
     public Sprite[] bombSpritesByType;     // 타입별 폭탄 스프라이트
 
     [Header("Scoring")]
@@ -49,7 +49,7 @@ public class BoardManager : MonoBehaviour
     private Vector2Int currentSwapB = new Vector2Int(-1, -1);
     int currentChain = 0;
 
-    // Optional UI hooks
+    // UI hooks
     public System.Action<int> OnScoreChanged;
     public System.Action<int> OnMovesChanged;
     public System.Action<int> OnChainBegin;
@@ -122,7 +122,7 @@ public class BoardManager : MonoBehaviour
         width = level.width; height = level.height;
         if (width <= 0 || height <= 0 || blockPrefab == null)
         {
-            Debug.LogError("[BoardManager] Build 실패: width/height 또는 blockPrefab 확인");
+            Debug.LogError("Build 실패: width/height 또는 blockPrefab 확인");
             return;
         }
 
@@ -130,12 +130,12 @@ public class BoardManager : MonoBehaviour
 
         // 고정 배치 / 막힌 칸
         for (int y = 0; y < height; y++)
-        for (int x = 0; x < width; x++)
-        {
-            int v = level.Get(x, y);
-            if (v < 0) { grid.SetBlocked(x, y, true); continue; }
-            grid.Spawn((BlockType)v, x, y, this);
-        }
+            for (int x = 0; x < width; x++)
+            {
+                int v = level.Get(x, y);
+                if (v < 0) { grid.SetBlocked(x, y, true); continue; }
+                grid.Spawn((BlockType)v, x, y, this);
+            }
 
         // 나머지 랜덤 채움 (막힌 칸 제외)
         grid.Refill(RandomType, this);
@@ -225,7 +225,7 @@ public class BoardManager : MonoBehaviour
             yield break;
         }
 
-        // 스왑으로 생긴 매치만 추림: 전역에서 찾고 a/b 포함 그룹만 필터 (더 견고)
+        // 스왑으로 생긴 매치만 추림/ 전역에서 찾고 a/b 포함 그룹만 필터
         var allGroups = matcher.FindAll();
         var seeded = new List<List<Vector2Int>>();
         if (allGroups != null)
@@ -253,81 +253,19 @@ public class BoardManager : MonoBehaviour
         if (Moves <= 0) OnNoMovesLeft?.Invoke();
     }
 
-    // ===== Promotion selection (deterministic) =====
-    
+    // ===== Promotion selection =====
+
     Vector2Int? ChoosePromotionForGroup(List<Vector2Int> g)
     {
         if (g == null || g.Count < 4) return null;
 
         Vector2Int pick;
-        int prio; // 2: currentSwapA, 1: currentSwapB, 0: none
 
-        if (g.Contains(currentSwapA)) { pick = currentSwapA; prio = 2; }
-        else if (g.Contains(currentSwapB)) { pick = currentSwapB; prio = 1; }
-        else { pick = g[g.Count / 2]; prio = 0; }
+        if (g.Contains(currentSwapA)) { pick = currentSwapA; }
+        else if (g.Contains(currentSwapB)) { pick = currentSwapB; }
+        else { pick = g[g.Count / 2]; }
 
-        // 이미 폭탄이면 라인 내 비폭탄으로 교체
-        var bb = grid.Get(pick.x, pick.y);
-        if (bb != null && bb.isBomb)
-        {
-            foreach (var c in g)
-            {
-                var bc = grid.Get(c.x, c.y);
-                if (bc != null && !bc.isBomb) { pick = c; break; }
-            }
-        }
         return pick;
-    }
-
-    Vector2Int? ChoosePromotionFromSeeded(List<List<Vector2Int>> groups)
-    {
-        Vector2Int? best = null;
-        int bestPrio = -1;
-        int bestLen = -1;
-
-        foreach (var g in groups)
-        {
-            if (g == null || g.Count < 4) continue;
-
-            Vector2Int pick;
-            int prio;
-
-            if (g.Contains(lastMovedA)) { pick = lastMovedA; prio = 2; }
-            else if (g.Contains(lastMovedB)) { pick = lastMovedB; prio = 1; }
-            else { pick = g[g.Count / 2]; prio = 0; }
-
-            var bb = grid.Get(pick.x, pick.y);
-            if (bb != null && bb.isBomb)
-            {
-                bool replaced = false;
-                foreach (var c in g)
-                {
-                    var bc = grid.Get(c.x, c.y);
-                    if (bc != null && !bc.isBomb) { pick = c; replaced = true; break; }
-                }
-                if (!replaced) continue;
-            }
-
-            bool isBetter = false;
-            if (prio > bestPrio) isBetter = true;
-            else if (prio == bestPrio)
-            {
-                if (g.Count > bestLen) isBetter = true;
-                else if (g.Count == bestLen)
-                {
-                    if (!best.HasValue) isBetter = true;
-                    else if (pick.x < best.Value.x || (pick.x == best.Value.x && pick.y < best.Value.y)) isBetter = true;
-                }
-            }
-
-            if (isBetter)
-            {
-                best = pick;
-                bestPrio = prio;
-                bestLen = g.Count;
-            }
-        }
-        return best;
     }
 
     IEnumerator ResolveFromSeed(List<List<Vector2Int>> seeded)
@@ -420,10 +358,6 @@ public class BoardManager : MonoBehaviour
         OnChainEnd?.Invoke();
     }
 
-    // === Wrappers for external systems ===
-    public List<Vector2Int> CellsInRadius(int x, int y, int r) => grid.CellsInRadius(x, y, r);
-    public IEnumerable<Vector2Int> Neighbors(int x, int y) => grid.Neighbors(x, y);
-
     // 카메라 핏에서 사용
     public bool GetBoardWorldBounds(out Vector3 min, out Vector3 max)
     {
@@ -431,23 +365,5 @@ public class BoardManager : MonoBehaviour
         if (grid == null || !grid.IsReady) return false;
         grid.GetWorldBounds(out min, out max);
         return !(min == max);
-    }
-
-    // 현재 보드에 존재하는 모든 블록을 반환 (카메라 핏 등에서 사용)
-    public List<Block> allBlocks
-    {
-        get
-        {
-            var list = new List<Block>();
-            if (grid == null || !grid.IsReady) return list;
-
-            for (int y = 0; y < height; y++)
-                for (int x = 0; x < width; x++)
-                {
-                    var b = grid.Get(x, y);
-                    if (b != null) list.Add(b);
-                }
-            return list;
-        }
     }
 }

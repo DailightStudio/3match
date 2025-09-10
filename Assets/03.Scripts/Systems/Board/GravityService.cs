@@ -12,10 +12,6 @@ public class GravityService
                 var b = grid.Get(x, y);
                 if (!b) continue;
 
-                int dx = x, dy = y + 1;
-                if (grid.Inside(dx, dy) && grid.Get(dx, dy) == null)
-                { grid.MoveBlock(b, dx, dy, fallSpeed); continue; }
-
                 bool isOdd = (y % 2) == 1;
                 int dlx = isOdd ? x : x - 1;
                 int drx = isOdd ? x + 1 : x;
@@ -39,16 +35,7 @@ public class GravityService
                 var b = grid.Get(x, y);
                 if (!b) continue; // 비었으면 스킵
 
-                // 1) 바로 아래
-                int dx = x, dy = y + 1;
-                if (grid.Inside(dx, dy) && grid.Get(dx, dy) == null)
-                {
-                    grid.MoveBlock(b, dx, dy, fallSpeed);
-                    moved = true;
-                    continue;
-                }
-
-                // 2) 대각(odd-r 오프셋)
+                // 대각(odd-r 오프셋)
                 bool isOdd = (y & 1) == 1;
                 int dlx = isOdd ? x : x - 1; // 좌하
                 int drx = isOdd ? x + 1 : x;     // 우하

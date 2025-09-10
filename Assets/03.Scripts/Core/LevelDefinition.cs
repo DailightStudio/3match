@@ -5,7 +5,6 @@ using UnityEngine;
 [Serializable]
 public class LevelDefinition
 {
-    // JSON: width/height를 안 넣어도 cells로부터 자동 계산해줌
     [JsonProperty("width")] public int width;
     [JsonProperty("height")] public int height;
 
@@ -25,7 +24,7 @@ public class LevelDefinition
         return row[x];
     }
 
-    /// <summary>JSON 문자열을 뉴턴으로 역직렬화 + 유효성 검증</summary>
+    /// <summary>JSON 문자열을 역직렬화, 유효성 검증</summary>
     public static LevelDefinition FromJson(string json)
     {
         try

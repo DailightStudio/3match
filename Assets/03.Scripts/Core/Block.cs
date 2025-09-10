@@ -16,7 +16,6 @@ public class Block : MonoBehaviour
 
     // 비주얼
     Sprite originalSprite;
-    Color originalColor = Color.white;
 
     // 이동
     public bool IsMoving { get; private set; }
@@ -24,12 +23,10 @@ public class Block : MonoBehaviour
     const float arriveEps = 0.0001f;
 
     BoardManager board;
-    SpriteRenderer sr; // 필드여야 ApplyBombSprite에서 접근 가능
+    SpriteRenderer sr;
 
     void Awake()
     {
-        // ❌ 로컬 변수로 가리면 안 됨
-        // ✅ 필드에 직접 대입
         sr = GetComponent<SpriteRenderer>();
     }
 
@@ -37,13 +34,14 @@ public class Block : MonoBehaviour
     {
         board = b; X = x; Y = y; type = t;
 
-        // 여기서도 필드 보정
         if (!sr) sr = GetComponent<SpriteRenderer>();
-        if (sr) { originalSprite = sr.sprite; originalColor = sr.color; }
+        if (sr) { originalSprite = sr.sprite; }
 
         transform.position = board.WorldPos(x, y);
         transform.localScale = Vector3.one;
-        isBomb = false; IsMoving = false; moveCo = null;
+        isBomb = false;
+        IsMoving = false;
+        moveCo = null;
         name = $"Block_{type}_{x}_{y}";
     }
 
@@ -84,21 +82,12 @@ public class Block : MonoBehaviour
 
         if (on)
         {
-            if (bombSprite != null)
-            {
-                sr.sprite = bombSprite;
-                sr.color = Color.white;
-            }
-            else
-            {
-                // 눈에 띄는 틴트(스프라이트 미지정 대응)
-                sr.color = new Color(1f, 0.9f, 0.4f, 1f);
-            }
+            sr.sprite = bombSprite;
+            sr.color = Color.white;
         }
         else
         {
-            if (originalSprite != null) sr.sprite = originalSprite;
-            sr.color = originalColor;
+            sr.sprite = originalSprite;
         }
         transform.localScale = Vector3.one;
     }

@@ -37,7 +37,7 @@ public class ResolveService
         {
             var bb = grid.Get(c.x, c.y);
             if (bb == null) continue;
-            if (promoteSet.Contains(c)) continue; // ★ 승격 예정 칸 보호
+            if (promoteSet.Contains(c)) continue; // 승격 예정 칸 보호
             toClear.Add(bb);
         }
 
@@ -50,7 +50,7 @@ public class ResolveService
             {
                 foreach (var p in grid.CellsInRadius(bb.X, bb.Y, bb.bombRadius))
                 {
-                    if (promoteSet.Contains(p)) continue; // ★ 승격 보호
+                    if (promoteSet.Contains(p)) continue; // 승격 보호
                     var nb = grid.Get(p.x, p.y);
                     if (nb != null && !toClear.Contains(nb))
                     {
@@ -61,7 +61,7 @@ public class ResolveService
             }
         }
 
-        // 간단 연출
+        // 연출
         float t = 0f;
         while (t < clearAnimTime)
         {

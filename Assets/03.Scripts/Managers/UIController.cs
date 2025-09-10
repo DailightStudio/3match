@@ -10,18 +10,9 @@ public class UIController : MonoBehaviour
     public BoardManager board;
 
     [Header("Texts")]
-#if TMP_PRESENT || UNITY_TEXTMESHPRO
-    public TMP_Text scoreText;
-    public TMP_Text movesText;
-    public TMP_Text chainText;
-#else
     public Text scoreText;
     public Text movesText;
     public Text chainText;
-#endif
-
-    [Header("Buttons")]
-    public Button shuffleButton;
 
     void Awake()
     {
@@ -32,9 +23,6 @@ public class UIController : MonoBehaviour
         board.OnMovesChanged += HandleMoves;
         board.OnChainBegin += HandleChainBegin;
         board.OnChainEnd += HandleChainEnd;
-
-        if (shuffleButton)
-            shuffleButton.onClick.AddListener(() => { board.OnChainEnd?.Invoke(); });
 
         // 초기 값 세팅
         HandleScore(board.Score);
