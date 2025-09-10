@@ -10,7 +10,6 @@ public class CameraAutoFit : MonoBehaviour
     public bool fitOnceOnStart { get; set; } = true;
 
     Camera cam;
-    bool fitted = false;
 
     void Awake()
     {
@@ -35,7 +34,6 @@ public class CameraAutoFit : MonoBehaviour
             yield return null;
 
         FitNow(min, max);
-        fitted = true;
     }
 
     public void FitNow(Vector3 min, Vector3 max)

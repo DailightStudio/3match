@@ -43,8 +43,6 @@ public class BoardManager : MonoBehaviour
     public int Moves { get; private set; }
 
     // 최근 스왑 좌표(승격 우선용)
-    private Vector2Int lastMovedA = new Vector2Int(-1, -1);
-    private Vector2Int lastMovedB = new Vector2Int(-1, -1);
     private Vector2Int currentSwapA = new Vector2Int(-1, -1);
     private Vector2Int currentSwapB = new Vector2Int(-1, -1);
     int currentChain = 0;
@@ -175,9 +173,6 @@ public class BoardManager : MonoBehaviour
         if (!Inside(x1, y1) || !Inside(x2, y2)) yield break;
         if (!AreAdjacent(x1, y1, x2, y2)) yield break;
         if (Moves <= 0) { OnNoMovesLeft?.Invoke(); yield break; }
-
-        lastMovedA = new Vector2Int(x1, y1);
-        lastMovedB = new Vector2Int(x2, y2);
 
         bool prevSim = simulateContinuously; simulateContinuously = false;
 
