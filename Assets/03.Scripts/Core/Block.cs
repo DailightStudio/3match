@@ -10,12 +10,9 @@ public class Block : MonoBehaviour
     [HideInInspector] public int Y;
     public BlockType type;
 
-    // TMT(폭탄)
+    // Bomb(폭탄)
     public bool isBomb = false;
     public int bombRadius = 1;
-
-    // 비주얼
-    Sprite originalSprite;
 
     // 이동
     public bool IsMoving { get; private set; }
@@ -32,10 +29,12 @@ public class Block : MonoBehaviour
 
     public void Init(BoardManager b, int x, int y, BlockType t)
     {
-        board = b; X = x; Y = y; type = t;
+        board = b; 
+        X = x; 
+        Y = y; 
+        type = t;
 
         if (!sr) sr = GetComponent<SpriteRenderer>();
-        if (sr) { originalSprite = sr.sprite; }
 
         transform.position = board.WorldPos(x, y);
         transform.localScale = Vector3.one;
@@ -66,12 +65,6 @@ public class Block : MonoBehaviour
         transform.position = target;
         IsMoving = false;
         moveCo = null;
-    }
-
-    public IEnumerator WaitUntilArrived()
-    {
-        yield return null;
-        while (IsMoving) yield return null;
     }
 
     /// <summary>Bomb(폭탄) 외형 적용</summary>
